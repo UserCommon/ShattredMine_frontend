@@ -1,0 +1,3 @@
+devServer: {
+    proxy: 'https://localhost/'
+}
