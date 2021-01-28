@@ -1,6 +1,6 @@
 <template>
     <div class="container">
-        <div class="success" v-if="token">
+        <div class="success" v-if="token_refresh">
             <h1 class='text-center wow fadeIn'>Ваш профиль</h1>
             <div class="d-flex justify-content-start">
                 <div class="profile-left mr-5 wow fadeInLeft">
@@ -12,8 +12,8 @@
                 </div>
                 <div class="profile-right wow fadeInRight">
                         <h3 class="text-left"> Вы зарегестрировались: {{ profile.date_joined }}</h3>
-                        <h4 class="text-left"> Доступ к серверу: {{profile.subscription}}</h4>
-                        <h4 class="text-left"> Статус репортёра: {{ profile.is_media }}</h4>
+                        <h4 class="text-left"> Доступ к серверу: <span v-if='profile.subscription'>Есть.</span> <span v-else>Нету.</span></h4>
+                        <h4 class="text-left"> Статус репортёра: <span v-if='profile.is_media'>Есть.</span> <span v-else>Нету.</span></h4>
                         <p>
                         <label for="">Скин: 
                             <input type="file" id="file" ref="file" v-on:change="handleFileUpload()">
@@ -39,10 +39,15 @@
 </template>
 
 <script>
+import {userMixin} from '../mixins/userMixin'
+
 export default {
+    mixins: [userMixin],
+
     data(){
         return{
-            token: localStorage.getItem('token'),
+            token_access: localStorage.getItem('token_access'),
+            token_refresh: localStorage.getItem('token_refresh'),
             id: localStorage.getItem('id'),
             profile: "",
             skin: ""
@@ -50,42 +55,18 @@ export default {
 
         }
     },
-    mounted(){
-        this.getUser()
-    },
+
     methods: {
-        reloadPage(){
-            window.location.reload()
-        },
-        submitFile(){
-            let formData = new FormData();
-            formData.append('skin', this.skin);
-            this.axios.put('http://127.0.0.1:8000/apiv1/profiles/' + this.id + '/update/',
-                formData,
-                {
-                    headers: {
-                        'Authorization': 'Bearer ' + this.token,
-                        'Content-Type': 'multipart/form-data'
-                    }
-                })
-                .then(response => (this.profile.skin = response.data))
-                .catch(error => console.log(error));
-        },
+
         handleFileUpload(){
             this.skin = this.$refs.file.files[0]; 
         },
 
-        getUser(){
-            this.axios
-                .get('http://127.0.0.1:8000/apiv1/profiles/' + this.id + '/', {
-                    headers: {
-                        'Authorization': 'Bearer ' + this.token
-                    }
-                })
-                .then(response => ((this.profile = response.data), console.log(response.data)))
-                .catch(error => console.log(error))
+        Logout(){
+            localStorage.removeItem('token_access');
+            localStorage.removeItem('token_refresh');
+            localStorage.removeItem('id'); //bug
         }
-
     }
 
 }

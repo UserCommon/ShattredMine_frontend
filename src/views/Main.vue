@@ -35,3 +35,4 @@
         <h2 class="text-center wow fadeInUp"><a href="{% url 'accounts_main' %}">Тогда регестрируйся!</a></h2>
     </div>
 </template>
+

@@ -1,5 +1,6 @@
 <template>
   <div id="#app" class="app">
+
     <component :is="layout">
       <router-view/>
     </component>
@@ -12,6 +13,14 @@ import EmptyLayout from '@/layouts/EmptyLayout'
 import BaseLayout from '@/layouts/BaseLayout'
 
   export default {
+    data(){
+      return{
+        token_access: localStorage.getItem('token_access'),
+        token_refresh: localStorage.getItem('token_refresh'),
+      }
+    },
+
+
     computed: {
       layout() {
         console.log()
@@ -20,7 +29,9 @@ import BaseLayout from '@/layouts/BaseLayout'
     },
     components: {
       EmptyLayout, BaseLayout
-    }
+    },
+
+    
   }
 </script>
 

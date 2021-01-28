@@ -13,6 +13,7 @@
         <b-button variant="primary" type="submit" :disabled="formValid">Подтвердить</b-button>
 
         <div class="mt-2"><span>Ещё не зарегистрированны? <router-link to="register">Тогда зарегестрируйтесь!</router-link></span></div>
+        <div class="mt-2"><span>Забыли пароль? <router-link to="recovery">Тогда восстановите его!</router-link></span></div>
     </b-form>
   </div>
 </template>
@@ -26,7 +27,9 @@ export default {
     return {
       username: "",
       password: "",
-      token: localStorage.getItem('token'),
+      //Убрать
+      token_access: localStorage.getItem('token_access'),
+      token_refresh: localStorage.getItem('token_refresh'),
       id: localStorage.getItem('id')
     };
   },
@@ -40,6 +43,9 @@ export default {
         minLength: minLength(6)
       },
   },
+    mounted(){
+      this.autoLogout()
+    },
   computed:{
       formValid() {
         return this.$v.$invalid
@@ -50,25 +56,30 @@ export default {
       event.preventDefault();
       // логика авторизации
       this.axios
-        .post(`http://localhost:8000/apiv1/token/`, { headers: { 'Content-type': 'application/json' }, 'username': this.username, 'password': this.password })
-        .then(response => { this.setLogined(response.data.access), console.log(response.data), this.$router.push('/launcher/') })
+        .post(`http://localhost:8000/apiv1/token/`, { headers: { 'Content-type': 'application/json'}, 'username': this.username, 'password': this.password })
+        .then(response => { this.setLogined(response.data.access, response.data.refresh), console.log(response.data), this.$router.push('/launcher/') })
         .catch(err => { console.error(err) })
     },
-    setLogined(token) {
+    setLogined(token_access, token_refresh) {
       // сохраняем токен
-      localStorage.setItem('token', token);
+      localStorage.setItem('token_access', token_access);
+      localStorage.setItem('token_refresh', token_refresh);
       this.axios
         .get('http://127.0.0.1:8000/apiv1/auth/users/me/',{
             headers: {
-              'Authorization': 'Bearer ' + token
+              'Authorization': 'Bearer ' + token_access,
+              
             }
         })
-        .then(response => (this.id = response.data.id, localStorage.setItem('id', this.id), console.log(this.token)))
-        .catch(error => console.log(error)),
-      
-      console.log(token);
-
+        .then(response => (this.id = response.data.id, localStorage.setItem('id', this.id), console.log(this.token_access)))
+        .catch(error => console.log(error))
     },
+
+        autoLogout(){
+            localStorage.removeItem('token_access');
+            localStorage.removeItem('token_refresh');
+            localStorage.removeItem('id'); //bug
+        }
 
   }
 };

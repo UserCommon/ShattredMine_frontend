@@ -1,6 +1,6 @@
 <template>
     <header>
-        <nav class="navbar navbar-expand-lg navbar-light" style="background-color: #87D1EE; min-height: 75px;"
+        <nav class="navbar navbar-expand-lg navbar-light shadow" style="background-color:"
              v-bind:class="{ 'navbarOpen': show }">
             <router-link
                     tag="a"

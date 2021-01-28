@@ -1,38 +1,3 @@
-
-Skip to content
-Pull requests
-Issues
-Marketplace
-Explore
-@UserCommon
-Learn Git and GitHub without any code!
-
-Using the Hello World guide, you’ll start a branch, write comments, and open a pull request.
-kantegory /
-naive-freelance
-
-1
-2
-
-    0
-
-Code
-Issues
-Pull requests
-Actions
-Projects
-Wiki
-Security
-
-    Insights
-
-naive-freelance/vue-freelance/src/components/auth/SignUp.vue
-@kantegory
-kantegory Fix password length, App.vue markup
-Latest commit 572e340 9 days ago
-History
-1 contributor
-131 lines (127 sloc) 4.56 KB
 <template>
   <div class="">
     <b-form @submit="register">
@@ -59,7 +24,7 @@ History
       <p class="text-danger" v-if="$v.password.required && $v.repeatPassword.required && !$v.repeatPassword.sameAs">Введённые пароли не совпадают</p>
       <b-button variant="primary" type="submit" :disabled="formValid">Регистрация</b-button>
       <p class="mt-2"><small class="text-muted">Все поля отмеченные <span class="text-danger">*</span> обязательны для заполнения.</small></p>
-      <p class="mt-3">Уже есть аккаунт? <router-link to="/auth/signin">Вход</router-link>
+      <p class="mt-3">Уже есть аккаунт? <router-link to="/login">Вход</router-link>
       </p>
     </b-form>
   </div>
@@ -74,6 +39,7 @@ export default {
       username: "",
       password: "",
       repeatPassword: "",
+      email: "",
       phone: "",
       userPhone: "",
       customerOrExecutor: "",
@@ -115,8 +81,8 @@ export default {
       event.preventDefault();
       // логика регистрации
       this.axios
-        .post(`http://localhost:8000/apiv1/auth/users/`, { headers: {'Content-type': 'application/json'}, 'username': this.username, 'password': this.password })
-        .then(response => { console.log(response); this.$router.push('/signin') })
+        .post(`http://localhost:8000/apiv1/auth/users/`, { headers: {'Content-type': 'application/json'}, 'username': this.username, 'password': this.password, 'email': this.email })
+        .then(response => { console.log(response); this.$router.push('/verify') })
         .catch(err => { console.error(err);
           this.err = err })
     },
